@@ -23,8 +23,8 @@ let createHourCircle= (href) => {
 	return container.append("image").attr("xlink:href", href).attr("x", (width - hourLineSvgSize) / 2).attr("y", (height - hourLineSvgSize) / 2).attr("width", hourLineSvgSize).attr("height", hourLineSvgSize);
 }
 
-let hourCircleBlank = createHourCircle('OneHourWithoutLabel.svg');
-let hourCircle = createHourCircle('OneHour.svg').attr('opacity', 0);
+let hourCircleBlank = createHourCircle('./OneHourWithoutLabel.svg');
+let hourCircle = createHourCircle('./OneHour.svg').attr('opacity', 0);
 
 let {stations, lines} = subway;
 		

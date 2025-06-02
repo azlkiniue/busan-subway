@@ -9,12 +9,14 @@ def gtfs_json(gtfs_path, service_group, min_time=0, max_time=48*HOURS):
     def read_csv(name):
         return list(csv.DictReader(open(os.path.join(gtfs_path, name + '.txt'))))
     
-    parent_stops = {}
-    for stop in read_csv('stops'):
-        if stop['parent_station']:
-            parent_stops[stop['stop_id']] = stop['parent_station']
+    # parent_stops = {}
+    # for stop in read_csv('stops'):
+    #     if stop['parent_station']:
+    #         parent_stops[stop['stop_id']] = stop['parent_station']
+    # def resolve_stop_id(stop_id):
+    #     return parent_stops.get(stop_id, stop_id)
     def resolve_stop_id(stop_id):
-        return parent_stops.get(stop_id, stop_id)
+        return stop_id
     
     transfers = defaultdict(list)
     for transfer in read_csv('transfers'):
@@ -28,9 +30,9 @@ def gtfs_json(gtfs_path, service_group, min_time=0, max_time=48*HOURS):
     stop_times = read_csv('stop_times')
     
     service_groups = {
-        'saturday': ['A20171105SAT', 'B20171105SAT'],
-        'sunday': ['A20171105SUN', 'B20171105SUN'],
-        'weekdays': ['A20171105WKD', 'B20171105WKD']
+        'saturday': ['SAT'],
+        'sunday': ['SUN'],
+        'weekdays': ['WD']
     }
     service_ids = service_groups[service_group]
     
@@ -56,12 +58,12 @@ assert time_str_to_float('01:23:00') == 1 * 60 * 60 + 23 * 60
 if __name__ == '__main__':
     schedules = [
         ('weekday_8am', 'weekdays', 8, 11),
-        ('weekday_midnight', 'weekdays', 0, 4),
+        ('weekday_midnight', 'weekdays', 22, 24),
         ('weekday_3am', 'weekdays', 3, 8),
         ('sunday_afternoon', 'sunday', 13, 17)
     ]
     for (name, service_group, start_hour, end_hour) in schedules:
-        transfers, events = gtfs_json('google_transit', service_group, start_hour*HOURS, end_hour*HOURS)
+        transfers, events = gtfs_json('gtfs', service_group, start_hour*HOURS, end_hour*HOURS)
         open('schedules/{}.json'.format(name), 'w').write(json.dumps({"events": events, "start_time": start_hour*HOURS}))
     open('schedules/transfers.js', 'w').write('gtfs_transfers = ' + json.dumps(transfers))
     
